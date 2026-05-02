@@ -1,22 +1,20 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    public function up(): void
-    {
+return new class extends Migration {
+    public function up(): void {
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique();
+            $table->uuid('uuid')->unique()->default(\DB::raw('NEWID()'));
 
-            $table->unsignedBigInteger('order_id')->nullable();
-            $table->unsignedBigInteger('product_id')->nullable();
+            $table->unsignedBigInteger('order_id')->nullable()->index();
+            $table->unsignedBigInteger('product_id')->nullable()->index();
             $table->integer('quantity')->nullable();
             $table->decimal('unit_price', 10, 2)->nullable();
-            $table->text('notes')->nullable();
+            $table->longText('notes')->nullable();
 
             $table->unsignedBigInteger('created_by')->nullable();
             $table->dateTime('created_at');
@@ -25,18 +23,11 @@ return new class extends Migration
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->dateTime('deleted_at')->nullable();
 
-            $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->nullable();
 
-            $table->index('order_id');
-            $table->index('product_id');
-
-            $table->foreign('order_id')->references('id')->on('orders')->nullOnDelete();
-            $table->foreign('product_id')->references('id')->on('products')->nullOnDelete();
+            $table->foreign('order_id')->references('id')->on('orders');
+            $table->foreign('product_id')->references('id')->on('products');
         });
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('order_items');
-    }
+    public function down(): void { Schema::dropIfExists('order_items'); }
 };

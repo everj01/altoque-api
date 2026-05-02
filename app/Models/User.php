@@ -17,23 +17,23 @@ class User extends Authenticatable
     use HasApiTokens, HasUuids, SoftDeletes, Notifiable;
 
     protected $fillable = [
-        'uuid',
         'firstname',
         'lastname',
         'phone',
+        'idcard',
         'email',
         'password',
         'mfa_enabled',
+        'mfa_secret',
         'timezone',
-        'created_by',
-        'updated_by',
-        'deleted_by',
         'is_active',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'id',
+        'mfa_secret'
     ];
 
     protected $casts = [
@@ -49,6 +49,11 @@ class User extends Authenticatable
     public function uniqueIds(): array
     {
         return ['uuid'];
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
     }
 
     protected static function boot(): void

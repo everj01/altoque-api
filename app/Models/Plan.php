@@ -2,19 +2,11 @@
 
 namespace App\Models;
 
-
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Plan extends BaseModel
 {
-    public $timestamps = false;
-
-    use HasUuids, SoftDeletes;
-
     protected $fillable = [
-        'uuid',
         'name',
         'slug',
         'description',
@@ -22,9 +14,6 @@ class Plan extends BaseModel
         'currency',
         'interval',
         'features',
-        'created_by',
-        'updated_by',
-        'deleted_by',
         'is_active',
     ];
 
@@ -37,12 +26,6 @@ class Plan extends BaseModel
         'deleted_at' => 'datetime',
     ];
 
-    public function uniqueIds(): array
-    {
-        return ['uuid'];
-    }
-
-    // Relaciones
     public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class);

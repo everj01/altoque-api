@@ -2,20 +2,12 @@
 
 namespace App\Models;
 
-
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends BaseModel
 {
-    public $timestamps = false;
-
-    use HasUuids, SoftDeletes;
-
     protected $fillable = [
-        'uuid',
         'tenant_id',
         'branch_id',
         'order_number',
@@ -23,9 +15,6 @@ class Order extends BaseModel
         'order_type',
         'total_amount',
         'table_number',
-        'created_by',
-        'updated_by',
-        'deleted_by',
         'is_active',
     ];
 
@@ -35,12 +24,6 @@ class Order extends BaseModel
         'deleted_at'   => 'datetime',
     ];
 
-    public function uniqueIds(): array
-    {
-        return ['uuid'];
-    }
-
-    // Relaciones
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);

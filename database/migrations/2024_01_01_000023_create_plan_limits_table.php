@@ -1,18 +1,16 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    public function up(): void
-    {
+return new class extends Migration {
+    public function up(): void {
         Schema::create('plan_limits', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique();
+            $table->uuid('uuid')->unique()->default(\DB::raw('NEWID()'));
 
-            $table->unsignedBigInteger('plan_id')->nullable();
+            $table->unsignedBigInteger('plan_id')->nullable()->index();
             $table->string('feature_name', 50)->nullable();
             $table->integer('limit_value')->nullable();
             $table->string('category_value', 20)->nullable();
@@ -24,16 +22,10 @@ return new class extends Migration
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->dateTime('deleted_at')->nullable();
 
-            $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->nullable();
 
-            $table->index('plan_id');
-
-            $table->foreign('plan_id')->references('id')->on('plans')->nullOnDelete();
+            $table->foreign('plan_id')->references('id')->on('plans');
         });
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('plan_limits');
-    }
+    public function down(): void { Schema::dropIfExists('plan_limits'); }
 };

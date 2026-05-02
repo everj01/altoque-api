@@ -2,29 +2,18 @@
 
 namespace App\Models;
 
-
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Branch extends BaseModel
 {
-    public $timestamps = false;
-
-    use HasUuids, SoftDeletes;
-
     protected $fillable = [
-        'uuid',
         'tenant_id',
         'name',
         'address',
         'region_id',
         'province_id',
         'district_id',
-        'created_by',
-        'updated_by',
-        'deleted_by',
         'is_active',
     ];
 
@@ -35,12 +24,6 @@ class Branch extends BaseModel
         'deleted_at' => 'datetime',
     ];
 
-    public function uniqueIds(): array
-    {
-        return ['uuid'];
-    }
-
-    // Relaciones
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);

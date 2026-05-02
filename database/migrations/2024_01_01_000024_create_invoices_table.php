@@ -9,19 +9,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('invoices', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('uuid')->unique();
+            $table->bigIncrements('id');
+            $table->binary('uuid', 16)->unique()->nullable();
 
-            $table->unsignedBigInteger('tenant_id')->nullable();
-            $table->unsignedBigInteger('subscription_id')->nullable();
+            $table->unsignedBigInteger('tenant_id')->nullable()->index();
+            $table->unsignedBigInteger('subscription_id')->nullable()->index();
             $table->string('invoice_number', 50)->nullable();
-            $table->enum('status', ['pending', 'failed', 'success'])->default('pending');
+            $table->string('status', 10)->nullable(); // pending, failed, success
             $table->decimal('total_amount', 13, 2)->nullable();
             $table->string('currency', 3)->nullable();
             $table->string('payment_method', 50)->nullable();
-            $table->text('payment_ref')->nullable();
+            $table->nvarchar('payment_ref', 'max')->nullable();
             $table->dateTime('paid_at')->nullable();
-            $table->text('notes')->nullable();
+            $table->nvarchar('notes', 'max')->nullable();
 
             $table->unsignedBigInteger('created_by')->nullable();
             $table->dateTime('created_at');
@@ -30,13 +30,10 @@ return new class extends Migration
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->dateTime('deleted_at')->nullable();
 
-            $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->nullable();
 
-            $table->index('tenant_id');
-            $table->index('subscription_id');
-
-            $table->foreign('tenant_id')->references('id')->on('tenants')->nullOnDelete();
-            $table->foreign('subscription_id')->references('id')->on('subscriptions')->nullOnDelete();
+            $table->foreign('tenant_id')->references('id')->on('tenants');
+            $table->foreign('subscription_id')->references('id')->on('subscriptions');
         });
     }
 

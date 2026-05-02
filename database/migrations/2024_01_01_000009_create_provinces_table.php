@@ -1,18 +1,16 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    public function up(): void
-    {
-        Schema::create('districts', function (Blueprint $table) {
+return new class extends Migration {
+    public function up(): void {
+        Schema::create('provinces', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique();
+            $table->uuid('uuid')->unique()->default(\DB::raw('NEWID()'));
 
-            $table->unsignedBigInteger('province_id')->nullable();
+            $table->unsignedBigInteger('region_id')->nullable();
             $table->string('name', 80)->nullable();
 
             $table->unsignedBigInteger('created_by')->nullable();
@@ -22,14 +20,10 @@ return new class extends Migration
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->dateTime('deleted_at')->nullable();
 
-            $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->nullable();
 
-            $table->foreign('province_id')->references('id')->on('provinces')->nullOnDelete();
+            $table->foreign('region_id')->references('id')->on('regions');
         });
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('districts');
-    }
+    public function down(): void { Schema::dropIfExists('provinces'); }
 };

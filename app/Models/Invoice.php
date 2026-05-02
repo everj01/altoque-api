@@ -2,19 +2,11 @@
 
 namespace App\Models;
 
-
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Invoice extends BaseModel
 {
-    public $timestamps = false;
-
-    use HasUuids, SoftDeletes;
-
     protected $fillable = [
-        'uuid',
         'tenant_id',
         'subscription_id',
         'invoice_number',
@@ -25,9 +17,6 @@ class Invoice extends BaseModel
         'payment_ref',
         'paid_at',
         'notes',
-        'created_by',
-        'updated_by',
-        'deleted_by',
         'is_active',
     ];
 
@@ -38,12 +27,6 @@ class Invoice extends BaseModel
         'deleted_at'   => 'datetime',
     ];
 
-    public function uniqueIds(): array
-    {
-        return ['uuid'];
-    }
-
-    // Relaciones
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);

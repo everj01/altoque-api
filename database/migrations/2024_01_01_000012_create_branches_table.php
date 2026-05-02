@@ -1,0 +1,39 @@
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void {
+        Schema::create('branches', function (Blueprint $table) {
+            $table->id();
+            $table->uuid('uuid')->unique()->default(\DB::raw('NEWID()'));
+
+            $table->unsignedBigInteger('tenant_id')->nullable();
+            $table->string('name', 150)->nullable();
+            $table->longText('address')->nullable();
+
+            $table->unsignedBigInteger('region_id')->nullable()->index();
+            $table->unsignedBigInteger('province_id')->nullable()->index();
+            $table->unsignedBigInteger('district_id')->nullable()->index();
+
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->dateTime('created_at');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->dateTime('updated_at')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->dateTime('deleted_at')->nullable();
+
+            $table->boolean('is_active')->nullable();
+
+            $table->unique(['tenant_id', 'name']);
+
+            $table->foreign('tenant_id')->references('id')->on('tenants');
+            $table->foreign('region_id')->references('id')->on('regions');
+            $table->foreign('province_id')->references('id')->on('provinces');
+            $table->foreign('district_id')->references('id')->on('districts');
+        });
+    }
+    public function down(): void { Schema::dropIfExists('branches'); }
+};

@@ -1,24 +1,22 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    public function up(): void
-    {
+return new class extends Migration {
+    public function up(): void {
         Schema::create('plans', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique();
+            $table->uuid('uuid')->unique()->default(\DB::raw('NEWID()'));
 
             $table->string('name', 50)->unique();
             $table->string('slug', 50)->unique();
-            $table->text('description')->nullable();
+            $table->longText('description')->nullable();
             $table->decimal('price', 10, 2);
             $table->string('currency', 5)->nullable();
-            $table->enum('interval', ['monthly', 'yearly', 'daily', 'weekly'])->nullable();
-            $table->json('features')->nullable();
+            $table->string('interval', 10)->nullable(); // monthly, yearly, daily, weekly
+            $table->longText('features')->nullable();
 
             $table->unsignedBigInteger('created_by')->nullable();
             $table->dateTime('created_at');
@@ -27,12 +25,8 @@ return new class extends Migration
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->dateTime('deleted_at')->nullable();
 
-            $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->nullable();
         });
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('plans');
-    }
+    public function down(): void { Schema::dropIfExists('plans'); }
 };

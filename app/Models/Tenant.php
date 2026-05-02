@@ -2,19 +2,11 @@
 
 namespace App\Models;
 
-
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Tenant extends BaseModel
 {
-    public $timestamps = false;
-
-    use HasUuids, SoftDeletes;
-
     protected $fillable = [
-        'uuid',
         'company_name',
         'slug',
         'logo_url',
@@ -25,9 +17,6 @@ class Tenant extends BaseModel
         'email',
         'phone',
         'address',
-        'created_by',
-        'updated_by',
-        'deleted_by',
         'is_active',
     ];
 
@@ -38,12 +27,6 @@ class Tenant extends BaseModel
         'deleted_at' => 'datetime',
     ];
 
-    public function uniqueIds(): array
-    {
-        return ['uuid'];
-    }
-
-    // Relaciones
     public function branches(): HasMany
     {
         return $this->hasMany(Branch::class);

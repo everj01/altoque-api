@@ -1,16 +1,14 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    public function up(): void
-    {
+return new class extends Migration {
+    public function up(): void {
         Schema::create('memberships', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique();
+            $table->uuid('uuid')->unique()->default(\DB::raw('NEWID()'));
 
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('tenant_id')->nullable();
@@ -24,19 +22,15 @@ return new class extends Migration
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->dateTime('deleted_at')->nullable();
 
-            $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->nullable();
 
             $table->unique(['user_id', 'tenant_id', 'branch_id', 'role_id']);
 
-            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
-            $table->foreign('tenant_id')->references('id')->on('tenants')->nullOnDelete();
-            $table->foreign('branch_id')->references('id')->on('branches')->nullOnDelete();
-            $table->foreign('role_id')->references('id')->on('roles')->nullOnDelete();
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('tenant_id')->references('id')->on('tenants');
+            $table->foreign('branch_id')->references('id')->on('branches');
+            $table->foreign('role_id')->references('id')->on('roles');
         });
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('memberships');
-    }
+    public function down(): void { Schema::dropIfExists('memberships'); }
 };

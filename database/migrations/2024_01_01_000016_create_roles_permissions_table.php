@@ -1,16 +1,14 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    public function up(): void
-    {
+return new class extends Migration {
+    public function up(): void {
         Schema::create('roles_permissions', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique();
+            $table->uuid('uuid')->unique()->default(\DB::raw('NEWID()'));
 
             $table->unsignedBigInteger('role_id')->nullable();
             $table->unsignedBigInteger('permission_id')->nullable();
@@ -22,17 +20,12 @@ return new class extends Migration
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->dateTime('deleted_at')->nullable();
 
-            $table->boolean('is_active')->default(true);
+            $table->boolean('is_active')->nullable();
 
             $table->unique(['role_id', 'permission_id']);
-
-            $table->foreign('role_id')->references('id')->on('roles')->nullOnDelete();
-            $table->foreign('permission_id')->references('id')->on('permissions')->nullOnDelete();
+            $table->foreign('role_id')->references('id')->on('roles');
+            $table->foreign('permission_id')->references('id')->on('permissions');
         });
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('roles_permissions');
-    }
+    public function down(): void { Schema::dropIfExists('roles_permissions'); }
 };
